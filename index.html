@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>시험감독 시간표 검색</title>
+    <link href="https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>시험감독 시간표 검색</h1>
+            <p>선생님 성함을 입력하시면 감독 시간표를 확인할 수 있습니다.</p>
+        </header>
+        
+        <main>
+            <div class="search-box">
+                <input type="text" id="searchInput" placeholder="예: 김두루" autocomplete="off">
+                <button id="searchBtn">검색</button>
+            </div>
+            
+            <div id="resultContainer" class="result-container">
+                <!-- 결과가 여기에 표시됩니다 -->
+            </div>
+        </main>
+    </div>
+
+    <!-- 데이터 파일 불러오기 -->
+    <script src="schedule_data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
