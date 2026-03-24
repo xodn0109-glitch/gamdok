@@ -78,6 +78,8 @@ header p {
     font-weight: 600;
     cursor: pointer;
     transition: background-color 0.2s;
+    flex-shrink: 0;
+    white-space: nowrap;
 }
 
 .search-box button:hover {
