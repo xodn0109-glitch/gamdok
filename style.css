@@ -118,7 +118,7 @@ header p {
 .schedule-row {
     display: flex;
     align-items: center;
-    padding: 0.5rem 0;
+    padding: 0.8rem 0;
     border-bottom: 1px solid #F3F4F6;
     gap: 1.5rem;
 }
@@ -134,13 +134,34 @@ header p {
     display: flex;
     align-items: center;
     gap: 0.35rem;
-    flex: 0 0 210px; /* 라벨 너비를 고정하여 우측 값들의 시작 위치를 일치시킴 */
+    flex: 0 0 180px; /* 라벨 너비 약간 줄임 */
 }
 
 .row-value {
     font-weight: 600;
     color: var(--text-main);
     font-size: 1.05rem;
+}
+
+/* 모바일 화면 대응: 항목을 위/아래 세로로 배치 */
+@media (max-width: 600px) {
+    .schedule-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+        padding: 1rem 0;
+    }
+    
+    .row-label {
+        flex: auto;
+        font-size: 0.9rem;
+        color: var(--primary);
+    }
+    
+    .row-value {
+        font-size: 1.1rem;
+        padding-left: 1.5rem; /* 아이콘 넓이만큼 들여쓰기 */
+    }
 }
 
 .period-bold {
