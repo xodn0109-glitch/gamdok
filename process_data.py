@@ -1,4 +1,5 @@
 import json
+import re
 
 with open("extracted_tables.json", "r", encoding="utf-8") as f:
     tables = json.load(f)
@@ -39,7 +40,8 @@ def process_grade_data(grade_name, data_table):
         for cls_name, cls_idx in zip(classes, class_indices):
             if cls_idx < len(row):
                 teacher = row[cls_idx]
-                if teacher and teacher.strip():
+                # Filter out empty values and class name references like "1-1"
+                if teacher and teacher.strip() and not re.match(r'^\d+-\d+$', teacher.strip()):
                     teacher = teacher.strip()
                     if teacher not in teacher_schedule:
                         teacher_schedule[teacher] = []
