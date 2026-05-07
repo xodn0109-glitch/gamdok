@@ -240,7 +240,7 @@ header p {
 
 .timeline-container {
     position: relative;
-    height: 950px;
+    height: 1500px;
     background: #fdfdfd;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -269,11 +269,11 @@ header p {
 .tl-block {
     position: absolute;
     border-radius: 6px;
-    padding: 4px;
+    padding: 6px 4px;
     font-size: 0.85rem;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     box-shadow: 0 1px 2px rgba(0,0,0,0.05);
@@ -287,7 +287,9 @@ header p {
 .tl-block.short-block {
     flex-direction: row;
     gap: 6px;
-    padding: 0 4px;
+    padding: 4px;
+    justify-content: center;
+    align-items: center;
 }
 
 .tl-12 {
@@ -320,10 +322,9 @@ header p {
 .tl-block.active-supervision {
     background-color: var(--primary);
     color: white;
-    box-shadow: 0 4px 8px rgba(79, 70, 229, 0.4);
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
     border: 2px solid #312e81;
-    z-index: 3;
-    transform: scale(1.03);
+    z-index: 5;
 }
 
 .tl-name {
@@ -358,7 +359,7 @@ header p {
 
 @media (max-width: 600px) {
     .timeline-container {
-        height: 850px;
+        height: 1400px;
     }
     .tl-block {
         padding: 2px;
