@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return h * 60 + m;
     }
 
-    function renderTimeline(teacherSchedules) {
+    function renderTimeline(teacherSchedules, regularClasses) {
         const startMins = timeToMinutes('08:10'); // 조금 일찍 시작해서 여백 확보
         const endMins = timeToMinutes('16:50');
         const totalMins = endMins - startMins;
@@ -74,9 +74,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const height = duration / totalMins * 100;
             const isShort = duration <= 15;
             
-            html += `<div class="tl-block tl-12 ${block.type} ${isShort ? 'short-block' : ''}" style="top: ${top}%; height: ${height}%">
+            const myClasses = regularClasses ? regularClasses.filter(c => c.period === block.name) : [];
+            const activeClass = myClasses.length > 0 ? 'active-regular' : '';
+            const detailStr = myClasses.length > 0 ? `<div class="tl-detail" style="font-size: 0.75rem; line-height: 1.2;">${myClasses.map(c => `${c.grade} ${c.class}(${c.subject})`).join('<br>')}</div>` : '';
+            
+            html += `<div class="tl-block tl-12 ${block.type} ${activeClass} ${(isShort && myClasses.length === 0) ? 'short-block' : ''}" style="top: ${top}%; height: ${height}%">
                 <div class="tl-name">${block.name}</div>
-                ${isShort ? '' : `<div class="tl-time">${block.start}~${block.end}</div>`}
+                ${(isShort && myClasses.length === 0) ? '' : `<div class="tl-time">${block.start}~${block.end}</div>`}
+                ${detailStr}
             </div>`;
         });
 
@@ -114,12 +119,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        const schedules = scheduleData[teacherName];
+        const schedules = scheduleData[teacherName] || [];
+        const regularClasses = (typeof thursdayData !== 'undefined' && thursdayData[teacherName]) ? thursdayData[teacherName] : [];
 
-        if (!schedules || schedules.length === 0) {
+        if (schedules.length === 0 && regularClasses.length === 0) {
             resultContainer.innerHTML = `
                 <div class="empty-state">
-                    <h3>'${teacherName}' 선생님의 배정된 시험감독 시간표가 없습니다.</h3>
+                    <h3>'${teacherName}' 선생님의 배정된 시험감독 또는 정규수업이 없습니다.</h3>
                     <p>이름을 올바르게 입력했는지 확인해주세요.</p>
                 </div>
             `;
@@ -131,7 +137,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let html = `<h2 class="teacher-name-heading">${teacherName} 선생님 시간표 비교</h2>`;
         
         // 타임라인 추가
-        html += renderTimeline(sortedSchedules);
+        html += renderTimeline(sortedSchedules, regularClasses);
 
         // 상세 정보(카드) 추가
         html += `<h3 style="margin-top: 1rem; margin-bottom: 1rem; font-size: 1.2rem; color: var(--text-main);">📋 상세 배정 내역</h3>`;

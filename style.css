@@ -327,12 +327,21 @@ header p {
     z-index: 5;
 }
 
+.tl-block.active-regular {
+    background-color: #d1fae5;
+    color: #065f46;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+    border: 2px solid #34d399;
+    z-index: 5;
+}
+
 .tl-name {
     font-weight: 700;
     font-size: 0.95rem;
 }
 
-.tl-block.active-supervision .tl-name {
+.tl-block.active-supervision .tl-name,
+.tl-block.active-regular .tl-name {
     font-size: 1.05rem;
 }
 
@@ -367,7 +376,8 @@ header p {
     .tl-name {
         font-size: 0.8rem;
     }
-    .tl-block.active-supervision .tl-name {
+    .tl-block.active-supervision .tl-name,
+    .tl-block.active-regular .tl-name {
         font-size: 0.9rem;
     }
     .tl-time {
