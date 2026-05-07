@@ -35,7 +35,10 @@ def process_grade_data(grade_name, data_table):
             continue
             
         if "월요일 4교시" in period_text:
-            period_text = period_text.replace("월요일 4교시\n(62분)", "7교시(62분)").replace("월요일 4교시 (62분)", "7교시(62분)")
+            period_text = period_text.replace("월요일 4교시\n(62분)", "7교시 (62분)").replace("월요일 4교시 (62분)", "7교시 (62분)")
+            
+        if "화요일 1교시" in period_text:
+            period_text = period_text.replace("화요일 1교시\n(62분)", "7교시 (62분)").replace("화요일 1교시 (62분)", "7교시 (62분)")
             
         for cls_name, cls_idx in zip(classes, class_indices):
             if cls_idx < len(row):

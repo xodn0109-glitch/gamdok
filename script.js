@@ -33,7 +33,7 @@ document.addEventListener('DOMContentLoaded', () => {
         { name: '5교시', start: '13:35', end: '14:20', type: 'class', id: '13:35~14:20' },
         { name: '쉬는시간', start: '14:20', end: '14:40', type: 'break' },
         { name: '6교시', start: '14:40', end: '15:35', type: 'class', id: '14:40~15:35' },
-        { name: '화1교시', start: '15:35', end: '16:37', type: 'class', id: '15:35~16:37' }
+        { name: '7교시', start: '15:35', end: '16:37', type: 'class', id: '15:35~16:37' }
     ];
 
     function timeToMinutes(timeStr) {
