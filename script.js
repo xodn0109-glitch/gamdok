@@ -74,7 +74,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const height = duration / totalMins * 100;
             const isShort = duration <= 15;
             
-            const myClasses = regularClasses ? regularClasses.filter(c => c.period === block.name) : [];
+            const myClasses = regularClasses ? regularClasses.filter(c => c.period === block.name && c.grade !== '3학년') : [];
             const activeClass = myClasses.length > 0 ? 'active-regular' : '';
             const detailStr = myClasses.length > 0 ? `<div class="tl-detail" style="font-size: 0.75rem; line-height: 1.2;">${myClasses.map(c => `${c.grade} ${c.class}(${c.subject})`).join('<br>')}</div>` : '';
             
