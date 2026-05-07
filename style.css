@@ -240,7 +240,7 @@ header p {
 
 .timeline-container {
     position: relative;
-    height: 700px;
+    height: 950px;
     background: #fdfdfd;
     border: 1px solid var(--border);
     border-radius: 8px;
@@ -281,6 +281,12 @@ header p {
     overflow: hidden;
     transition: all 0.2s;
     border: 1px solid rgba(0,0,0,0.05);
+}
+
+.tl-block.short-block {
+    flex-direction: row;
+    gap: 6px;
+    padding: 0 4px;
 }
 
 .tl-12 {
@@ -351,7 +357,7 @@ header p {
 
 @media (max-width: 600px) {
     .timeline-container {
-        height: 600px;
+        height: 850px;
     }
     .tl-block {
         padding: 2px;

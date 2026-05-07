@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function renderTimeline(teacherSchedules) {
-        const startMins = timeToMinutes('08:15'); // 조금 일찍 시작해서 여백 확보
+        const startMins = timeToMinutes('08:10'); // 조금 일찍 시작해서 여백 확보
         const endMins = timeToMinutes('16:50');
         const totalMins = endMins - startMins;
         
@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="timeline-container">
         `;
 
-        // Add time markers (e.g. 09:00, 10:00, ...)
+        // Add time markers (e.g. 08:30, 09:00, 10:00, ...)
         for(let h=8; h<=16; h++) {
             const min = h * 60;
             if (min >= startMins && min <= endMins) {
@@ -64,16 +64,19 @@ document.addEventListener('DOMContentLoaded', () => {
                 html += `<div class="time-marker" style="top: ${top}%"><span>${h}:00</span></div>`;
             }
         }
-
+        
         // Render 1,2 grade blocks
         grade12Schedule.forEach(block => {
             const start = timeToMinutes(block.start);
             const end = timeToMinutes(block.end);
+            const duration = end - start;
             const top = (start - startMins) / totalMins * 100;
-            const height = (end - start) / totalMins * 100;
-            html += `<div class="tl-block tl-12 ${block.type}" style="top: ${top}%; height: ${height}%">
+            const height = duration / totalMins * 100;
+            const isShort = duration <= 15;
+            
+            html += `<div class="tl-block tl-12 ${block.type} ${isShort ? 'short-block' : ''}" style="top: ${top}%; height: ${height}%">
                 <div class="tl-name">${block.name}</div>
-                <div class="tl-time">${block.start}~${block.end}</div>
+                ${isShort ? '' : `<div class="tl-time">${block.start}~${block.end}</div>`}
             </div>`;
         });
 
@@ -83,17 +86,19 @@ document.addEventListener('DOMContentLoaded', () => {
         grade3Schedule.forEach(block => {
             const start = timeToMinutes(block.start);
             const end = timeToMinutes(block.end);
+            const duration = end - start;
             const top = (start - startMins) / totalMins * 100;
-            const height = (end - start) / totalMins * 100;
+            const height = duration / totalMins * 100;
+            const isShort = duration <= 15;
             
             const isMySupervision = mySchedules.includes(block.id);
             const activeClass = isMySupervision ? 'active-supervision' : '';
             const myData = isMySupervision ? teacherSchedules.find(s => s.time === block.id) : null;
             const detailStr = myData ? `<div class="tl-detail">${myData.grade} ${myData.class}</div>` : '';
 
-            html += `<div class="tl-block tl-3 ${block.type} ${activeClass}" style="top: ${top}%; height: ${height}%">
+            html += `<div class="tl-block tl-3 ${block.type} ${activeClass} ${isShort && !isMySupervision ? 'short-block' : ''}" style="top: ${top}%; height: ${height}%">
                 <div class="tl-name">${block.name}</div>
-                <div class="tl-time">${block.start}~${block.end}</div>
+                ${(isShort && !isMySupervision) ? '' : `<div class="tl-time">${block.start}~${block.end}</div>`}
                 ${detailStr}
             </div>`;
         });
