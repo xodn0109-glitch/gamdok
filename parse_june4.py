@@ -6,7 +6,7 @@ exam 열은 rowspan 으로 병합되어 있어 상태로 추적한다.
 import json
 import re
 
-SRC = "6월_4일목_전국연합학력평가_감독배정표.md"
+SRC = "6월_4일목_전국연합학력평가_감독배정표_0602수정.md"
 OUT = "schedule_data.js"
 
 with open(SRC, encoding="utf-8") as f:
@@ -58,9 +58,12 @@ def process_grade(grade_name, table_html):
             time_text, period_text = cells[1][0], cells[2][0]
             class_vals = cells[4:]  # [exam, time, period, 빈칸, classes...]
 
-        # 교시 시간이 아닌 행(담임/쉬는시간/점심)은 건너뜀
-        if not re.match(r"^\d{2}:\d{2}~\d{2}:\d{2}$", time_text):
+        # 교시 시간이 아닌 행(담임/쉬는시간/점심)은 건너뜀.
+        # 시간칸에 "영어듣기방송 13:07~13:35" 같은 주석이 붙어도 앞쪽 시간만 추출.
+        tmatch = re.match(r"^(\d{2}:\d{2}~\d{2}:\d{2})", time_text)
+        if not tmatch:
             continue
+        time_clean = tmatch.group(1)
 
         for cls_name, cell in zip(class_names, class_vals):
             for teacher in split_teachers(cell[0]):
@@ -68,7 +71,7 @@ def process_grade(grade_name, table_html):
                     "grade": grade_name,
                     "class": cls_name,
                     "exam": exam,
-                    "time": time_text,
+                    "time": time_clean,
                     "period": period_text,
                 })
 
