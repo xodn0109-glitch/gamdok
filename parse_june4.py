@@ -6,7 +6,7 @@ exam 열은 rowspan 으로 병합되어 있어 상태로 추적한다.
 import json
 import re
 
-SRC = "6월_4일목_전국연합학력평가_감독배정표_0602수정.md"
+SRC = "6월_4일목_전국연합학력평가_감독배정표_0602최종수정.md"
 OUT = "schedule_data.js"
 
 with open(SRC, encoding="utf-8") as f:
