@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="schedule-card">
                     <div class="schedule-row">
                         <span class="row-label">⏰ 감독 시간</span>
-                        <span class="row-value"><span class="period-bold">${item.period.split(' ')[0]}</span> <span class="time-sub">(${item.time})</span></span>
+                        <span class="row-value"><span class="period-bold">${item.period}</span> <span class="time-sub">(${item.time})</span></span>
                     </div>
                     <div class="schedule-row">
                         <span class="row-label">📍 장소</span>

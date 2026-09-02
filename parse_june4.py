@@ -1,16 +1,16 @@
-"""6월 4일 전국연합학력평가 감독배정표(마크다운 HTML 표) → schedule_data.js 생성.
+"""시험감독 기준 Markdown의 HTML 표를 웹앱 데이터로 변환한다.
 
-전학년(1,2,3학년) 동시시험. 각 학년 표의 셀에서 (교사 -> 감독 배정) 매핑을 만든다.
-exam 열은 rowspan 으로 병합되어 있어 상태로 추적한다.
+각 학년 표의 시험명 셀은 ``rowspan``으로 병합되어 있어 상태로 추적한다.
+원본의 시간표 참고 문구는 보존하되, 교사에게 보이는 ``period`` 값은 실제
+감독 구분(예: ``7교시(62분)`` 또는 ``부담임(33분)``)만 사용한다.
 """
+import argparse
 import json
 import re
+from pathlib import Path
 
-SRC = "6월_4일목_전국연합학력평가_감독배정표_0602최종수정.md"
-OUT = "schedule_data.js"
-
-with open(SRC, encoding="utf-8") as f:
-    content = f.read()
+DEFAULT_SOURCE = Path("6월_4일목_전국연합학력평가_감독배정표_0602최종수정.md")
+DEFAULT_OUTPUT = Path("schedule_data.js")
 
 
 def parse_cells(tr_html):
@@ -31,10 +31,19 @@ def split_teachers(cell_text):
     return [t for t in cell_text.split() if t]
 
 
-teacher_schedule = {}
+def normalize_period(period_text):
+    """화면에 표시할 감독 구분만 반환한다.
+
+    Markdown 표에는 수업 시정 관련 메모가 줄바꿈 뒤에 이어질 수 있다. 이 메모는
+    감독 배정의 시간·장소·시험 정보를 바꾸지 않으므로, 첫 감독 구분만 노출한다.
+    """
+    match = re.search(r"(?:\d+교시|부담임)\s*\(\s*\d+분\s*\)", period_text)
+    if not match:
+        return period_text
+    return re.sub(r"\s+", "", match.group(0))
 
 
-def process_grade(grade_name, table_html):
+def process_grade(grade_name, table_html, teacher_schedule):
     rows = re.findall(r"<tr>(.*?)</tr>", table_html, flags=re.S)
     header = parse_cells(rows[0])
     # header: [전국연합시정표, 학교시정표, (빈칸), class1, class2, ...]
@@ -72,17 +81,47 @@ def process_grade(grade_name, table_html):
                     "class": cls_name,
                     "exam": exam,
                     "time": time_clean,
-                    "period": period_text,
+                    "period": normalize_period(period_text),
                 })
 
 
-# 마크다운에서 학년별 표 추출
-for grade in ["1학년", "2학년", "3학년"]:
-    m = re.search(r"## " + grade + r".*?(<table>.*?</table>)", content, flags=re.S)
-    process_grade(grade, m.group(1))
+def build_schedule(content):
+    """기준 Markdown 전체에서 교사별 감독 배정을 만든다."""
+    teacher_schedule = {}
+    for grade in ["1학년", "2학년", "3학년"]:
+        match = re.search(
+            rf"## {re.escape(grade)}.*?(<table>.*?</table>)", content, flags=re.S
+        )
+        if not match:
+            raise ValueError(f"{grade} HTML 표를 찾지 못했습니다.")
+        process_grade(grade, match.group(1), teacher_schedule)
+    return teacher_schedule
 
-with open(OUT, "w", encoding="utf-8") as f:
-    f.write("const scheduleData = " + json.dumps(teacher_schedule, ensure_ascii=False, indent=2) + ";")
 
-total = sum(len(v) for v in teacher_schedule.values())
-print(f"OK: {len(teacher_schedule)}명, 총 {total}건 배정 -> {OUT}")
+def write_schedule(teacher_schedule, output_path):
+    output_path.write_text(
+        "const scheduleData = "
+        + json.dumps(teacher_schedule, ensure_ascii=False, indent=2)
+        + ";\n",
+        encoding="utf-8",
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser(description="시험감독 Markdown을 schedule_data.js로 변환")
+    parser.add_argument("--source", type=Path, default=DEFAULT_SOURCE)
+    parser.add_argument("--output", type=Path, default=DEFAULT_OUTPUT)
+    args = parser.parse_args()
+
+    if not args.source.is_file():
+        parser.error(f"기준 원본을 찾지 못했습니다: {args.source}")
+
+    teacher_schedule = build_schedule(args.source.read_text(encoding="utf-8"))
+    write_schedule(teacher_schedule, args.output)
+
+    total = sum(len(schedules) for schedules in teacher_schedule.values())
+    print(f"OK: {len(teacher_schedule)}명, 총 {total}건 배정 -> {args.output}")
+
+
+if __name__ == "__main__":
+    main()
